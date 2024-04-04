@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-go$qd_81^(o-rm!5^1b(q8o8yif6&_w#p5(cvxkfi@wpl_+36i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.1.1']
 
 
 # Application definition
@@ -67,12 +67,9 @@ WSGI_APPLICATION = 'backend_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'multivendor_ecommerce',
-        'USER': 'postgres',
-        'PASSWORD' : 'maxpayne3',
-        'HOST': 'localhost'
-    }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    },
 }
 
 
