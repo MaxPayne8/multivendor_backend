@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Vendor,Product,Customer,Order,OrderItems,CustomerAddress,ProductRating,ProductCategory
+from .models import Vendor,Product,Customer,Order,OrderItems,CustomerAddress,ProductRating,ProductCategory,ProductImage
 
 class VendorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,12 +20,16 @@ class VendorSerializer(serializers.ModelSerializer):
 #         super(VendorDetailSerializer,self).__init__(*args, **kwargs)
 #         self.Meta.depth = 1
 
-
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields='__all__'
 class ProductSerializer(serializers.ModelSerializer):
     product_ratings = serializers.StringRelatedField(many=True, read_only=True)
+    product_images = ProductImageSerializer(many=True, read_only=True)
     class Meta:
         model= Product 
-        fields = ['id','category','vendor','title','detail','price','product_ratings']
+        fields = ['id','category','vendor','title','detail','price','product_ratings','product_images','tag_list']
         
     def __init__(self, *args, **kwargs):        
         super(ProductSerializer,self).__init__(*args, **kwargs)

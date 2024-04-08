@@ -3,8 +3,9 @@ from .serializers import VendorSerializer,ProductSerializer,CustomerSerializer,O
 from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView,ListAPIView
 from .models import Vendor,Product,Customer,Order,OrderItems,CustomerAddress,ProductRating,ProductCategory
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import pagination,viewsets
-
+from rest_framework import viewsets
+from .pagination import CustomPagination1,CustomPagination2
+from django.utils.datastructures import MultiValueDictKeyError
 # Create your views here.
 
 class VendorList(ListCreateAPIView):
@@ -30,9 +31,35 @@ class CustomerDetails(RetrieveUpdateDestroyAPIView):
 class ProductsList(ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    pagination_class = pagination.PageNumberPagination
-    # pagination_class = pagination.LimitOffsetPagination
+    pagination_class = CustomPagination1
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        try:
+            category_id = self.request.GET.get('category')
+            category = ProductCategory.objects.get(id=category_id)
+            qs = qs.filter(category=category)
+        except (ProductCategory.DoesNotExist, MultiValueDictKeyError):
+            # Handle the case when the category parameter is not present
+            pass
+        return qs
     
+class TagProducts(ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    pagination_class = CustomPagination2
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        try:
+            tag = self.kwargs['tag']
+            qs = qs.filter(tags__icontains=tag)
+            return qs
+        except KeyError:
+            # Handle the case when the category parameter is not present
+            pass
+        return qs
+
 class ProductDetails(RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -62,3 +89,4 @@ class ProductRatingViewSet(viewsets.ModelViewSet):
 class ProductCategoryViewSet(viewsets.ModelViewSet):
     queryset = ProductCategory.objects.all()
     serializer_class = CategorySerializer
+    pagination_class = CustomPagination2

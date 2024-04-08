@@ -28,8 +28,24 @@ class Product(models.Model):
     title = models.CharField(max_length=100)
     detail = models.TextField(null= True)
     price = models.FloatField()
+    tags = models.TextField(null=True)
     def __str__(self):
       return self.title
+    
+    def tag_list(self):
+        if self.tags:
+            return self.tags.split(',')
+        else:
+            return []
+
+    
+    
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product,on_delete=models.CASCADE , null=True,related_name="product_images")
+    image= models.ImageField(upload_to='prod_images/', null=True)
+    def __str__(self):
+       return self.image.name if self.image else 'No Image'
+        
   
   
 class Customer(models.Model):
