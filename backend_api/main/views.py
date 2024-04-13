@@ -51,14 +51,38 @@ class TagProducts(ListCreateAPIView):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        print("qs__",qs)
+        for product in qs:
+                print("Product Tags:", product.tags)
         try:
-            tag = self.kwargs['tag']
-            qs = qs.filter(tags__icontains=tag)
+            tag = self.kwargs['tag'].strip()
+            qs = qs.filter(tags__icontains=tag) 
             return qs
         except KeyError:
             # Handle the case when the category parameter is not present
             pass
         return qs
+    
+    
+class CategoryRelatedProducts(ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        
+        try:
+            product_id = self.kwargs['pk']
+            product = Product.objects.filter(id=product_id).first()
+            print("qaiss", product)
+            qs= Product.objects.filter(category=product.category).exclude(id=product_id)
+            print("qais", qs)
+            return qs
+        except KeyError:
+            # Handle the case when the category parameter is not present
+            pass
+        return qs    
 
 class ProductDetails(RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()

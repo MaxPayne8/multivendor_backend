@@ -28,7 +28,8 @@ class Product(models.Model):
     title = models.CharField(max_length=100)
     detail = models.TextField(null= True)
     price = models.FloatField()
-    tags = models.TextField(null=True)
+    tags = models.TextField(null=True,blank=True)
+    demo= models.URLField(null=True,blank=True)
     def __str__(self):
       return self.title
     
